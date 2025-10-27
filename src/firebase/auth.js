@@ -19,7 +19,6 @@ import {
   
         // Optionally call login right after registration
         await this.loginUser(email, password);
-  
         console.log("User registered successfully:", user.email);
         return user;
       } catch (error) {
