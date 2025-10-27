@@ -1,6 +1,10 @@
 // service.js
 import { 
-  collection, addDoc, doc, updateDoc, deleteDoc, getDoc, getDocs, serverTimestamp 
+  collection, addDoc, doc, updateDoc, deleteDoc, getDoc, getDocs, serverTimestamp,getStorage, 
+  ref, 
+  uploadBytes, 
+  getDownloadURL, 
+  deleteObject
 } from "firebase/firestore";
 import { db, storage } from "./firebaseApp"; // ✅ centralized import
 
@@ -61,6 +65,34 @@ class Service {
       console.log("Service :: getAllPosts :: error", error);
     }
   }
+
+
+    // ✅ Upload file (e.g., image)
+    async uploadFile(file, path = "uploads") {
+      try {
+        const fileRef = ref(this.storage, `${path}/${file.name}`);
+        await uploadBytes(fileRef, file);
+        const downloadURL = await getDownloadURL(fileRef);
+        console.log("✅ File uploaded:", downloadURL);
+        return downloadURL; // return this to store in Firestore
+      } catch (error) {
+        console.error("firebase service :: uploadFile :: error", error);
+        throw error;
+      }
+    }
+  
+    // ✅ Delete file from Firebase Storage
+    async deleteFile(fileUrl) {
+      try {
+        const fileRef = ref(this.storage, fileUrl);
+        await deleteObject(fileRef);
+        console.log("🗑️ File deleted successfully");
+      } catch (error) {
+        console.error("firebase service :: deleteFile :: error", error);
+        throw error;
+      }
+    }
+  
 }
 
 const service = new Service();
