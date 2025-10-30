@@ -6,7 +6,7 @@ import { Button, Input, Logo } from './index.js'
 import { useForm } from 'react-hook-form'
 import authService from '../firebase/auth'
 
-function Signup() {
+export  default function Signup()  {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
@@ -90,4 +90,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+

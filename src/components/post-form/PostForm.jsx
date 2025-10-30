@@ -54,43 +54,75 @@ function PostForm({ post }) {
     }
   };
 
-  return (
-    <form
-      onSubmit={handleSubmit(submit)}
-      className="max-w-2xl mx-auto bg-gray-100 p-6 rounded-xl shadow-md space-y-5"
-    >
-      <Input
-        label="Title"
-        placeholder="Enter post title"
-        {...register("title", { required: true })}
-      />
+  const slugTransform = useCallback((value) => {
+    if (value && typeof value === "string")
+        return value
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-zA-Z\d\s]+/g, "-")
+            .replace(/\s/g, "-");
 
-      <Input
-        label="Slug"
-        placeholder="Enter unique slug"
-        {...register("slug", { required: true })}
-      />
+    return "";
+}, []);
 
-      <Input
-        type="file"
-        label="Featured Image"
-        accept="image/*"
-        {...register("image")}
-      />
+React.useEffect(() => {
+    const subscription = watch((value, { name }) => {
+        if (name === "title") {
+            setValue("slug", slugTransform(value.title), { shouldValidate: true });
+        }
+    });
 
-      <RTE label="Content" control={control} name="content" />
+    return () => subscription.unsubscribe();
+}, [watch, slugTransform, setValue]);
 
-      <Select
-        label="Status"
-        options={["active", "draft"]}
-        {...register("status")}
-      />
-
-      <Button type="submit" className="w-full">
-        {post ? "Update Post" : "Create Post"}
-      </Button>
+return (
+    <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
+        <div className="w-2/3 px-2">
+            <Input
+                label="Title :"
+                placeholder="Title"
+                className="mb-4"
+                {...register("title", { required: true })}
+            />
+            <Input
+                label="Slug :"
+                placeholder="Slug"
+                className="mb-4"
+                {...register("slug", { required: true })}
+                onInput={(e) => {
+                    setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+                }}
+            />
+            <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+        </div>
+        <div className="w-1/3 px-2">
+            <Input
+                label="Featured Image :"
+                type="file"
+                className="mb-4"
+                accept="image/png, image/jpg, image/jpeg, image/gif"
+                {...register("image", { required: !post })}
+            />
+            {post && (
+                <div className="w-full mb-4">
+                    <img
+                        src={appwriteService.getFilePreview(post.featuredImage)}
+                        alt={post.title}
+                        className="rounded-lg"
+                    />
+                </div>
+            )}
+            <Select
+                options={["active", "inactive"]}
+                label="Status"
+                className="mb-4"
+                {...register("status", { required: true })}
+            />
+            <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+                {post ? "Update" : "Submit"}
+            </Button>
+        </div>
     </form>
-  );
+);
 }
-
-export default PostForm;
+export default PostForm
