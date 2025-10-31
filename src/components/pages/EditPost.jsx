@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, PostForm } from "../components";
+import { Container, PostForm } from "../index";
 import service from "../../firebase/config";
 
 function EditPost() {
@@ -14,7 +14,7 @@ function EditPost() {
         if (postData) {
           setPost(postData);
         } else {
-          navigate("/"); // redirect if post not found
+          navigate("/");
         }
       });
     } else {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import service from "../../firebase/config";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button, Container } from "../components";
+import { Button, Container } from "../index";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 
@@ -11,7 +11,7 @@ function Post() {
   const navigate = useNavigate();
 
   const userData = useSelector((state) => state.auth.userData);
-  const isAuthor = post && userData ? post.userId === userData.id : false;
+  const isAuthor = post && userData ? post.userId === userData.uid : false;
 
   useEffect(() => {
     if (slug) {

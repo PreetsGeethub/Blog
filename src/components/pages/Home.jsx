@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import service from "../../firebase/config";
-import { Container, PostCard } from "../components";
+import { Container, PostCard } from "../index";
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -8,7 +8,7 @@ function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const allPosts = await service.getAllPosts(); // ✅ Fetch all posts
+        const allPosts = await service.getAllPosts();
         if (allPosts && allPosts.length > 0) {
           setPosts(allPosts);
         }

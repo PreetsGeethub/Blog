@@ -1,18 +1,12 @@
-import { 
+import {
   collection, addDoc, doc, updateDoc, deleteDoc, getDoc, getDocs, serverTimestamp
 } from "firebase/firestore";
 
-import { 
-  getStorage, ref, uploadBytes, getDownloadURL, deleteObject
-} from "firebase/storage";
-
-import { db, storage } from "./firebaseApp";
+import { db } from "./firebaseApp";
 
 class Service {
-  constructor() {
-    this.storage = storage;
-  }
 
+  // ✅ Create Post
   async createPost(data) {
     try {
       const docRef = await addDoc(collection(db, "posts"), {
@@ -26,6 +20,7 @@ class Service {
     }
   }
 
+  // ✅ Update Post
   async updatePost(postId, updatedData) {
     try {
       const postRef = doc(db, "posts", postId);
@@ -36,6 +31,7 @@ class Service {
     }
   }
 
+  // ✅ Delete Post
   async deletePost(postId) {
     try {
       const postRef = doc(db, "posts", postId);
@@ -46,6 +42,7 @@ class Service {
     }
   }
 
+  // ✅ Get a Single Post
   async getPost(postId) {
     try {
       const docRef = doc(db, "posts", postId);
@@ -61,6 +58,7 @@ class Service {
     }
   }
 
+  // ✅ Get All Posts
   async getAllPosts() {
     try {
       const querySnapshot = await getDocs(collection(db, "posts"));
@@ -70,30 +68,37 @@ class Service {
     }
   }
 
-  // ✅ Upload file
-  async uploadFile(file, path = "uploads") {
+  // ✅ Upload file to Cloudinary
+  async uploadFile(file) {
     try {
-      const fileRef = ref(this.storage, `${path}/${file.name}`);
-      await uploadBytes(fileRef, file);
-      const downloadURL = await getDownloadURL(fileRef);
-      console.log("✅ File uploaded:", downloadURL);
-      return downloadURL;
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "blog_upload"); // your preset name
+
+      // ⚠️ FIXED: remove angle brackets around cloud name
+      const res = await fetch("https://api.cloudinary.com/v1_1/dxu5jkdwy/image/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      const uploadRes = await res.json();
+
+      if (!uploadRes.secure_url) {
+        throw new Error("Cloudinary upload failed");
+      }
+
+      console.log("✅ File uploaded to Cloudinary:", uploadRes.secure_url);
+      return uploadRes.secure_url; // URL to store in Firestore
     } catch (error) {
-      console.error("firebase service :: uploadFile :: error", error);
+      console.error("service :: uploadFile :: error", error);
       throw error;
     }
   }
 
-  // ✅ Delete file
+  // ✅ Delete file (Cloudinary deletion not available client-side)
   async deleteFile(fileUrl) {
-    try {
-      const fileRef = ref(this.storage, fileUrl);
-      await deleteObject(fileRef);
-      console.log("🗑️ File deleted successfully");
-    } catch (error) {
-      console.error("firebase service :: deleteFile :: error", error);
-      throw error;
-    }
+    console.log("⚠️ Delete not implemented for Cloudinary free plan.");
+    // Cloudinary deletion requires server-side API key for security.
   }
 }
 
