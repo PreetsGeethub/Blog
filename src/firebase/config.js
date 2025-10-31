@@ -17,6 +17,7 @@ class Service {
       return docRef.id;
     } catch (error) {
       console.log("Service :: createPost :: error", error);
+      throw error;
     }
   }
 
@@ -28,6 +29,7 @@ class Service {
       console.log("✅ Post updated successfully");
     } catch (error) {
       console.log("Service :: updatePost :: error", error);
+      throw error;
     }
   }
 
@@ -39,6 +41,7 @@ class Service {
       console.log("✅ Post deleted successfully");
     } catch (error) {
       console.log("Service :: deletePost :: error", error);
+      throw error;
     }
   }
 
@@ -55,6 +58,7 @@ class Service {
       }
     } catch (error) {
       console.log("Service :: getPost :: error", error);
+      throw error;
     }
   }
 
@@ -65,17 +69,29 @@ class Service {
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.log("Service :: getAllPosts :: error", error);
+      throw error;
     }
   }
 
-  // ✅ Upload file to Cloudinary
+  // ✅ Upload file to Cloudinary with validation
   async uploadFile(file) {
     try {
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new Error("File size must be less than 5MB");
+      }
+
+      // Validate file type
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error("Only PNG, JPG, JPEG, and GIF files are allowed");
+      }
+
       const data = new FormData();
       data.append("file", file);
-      data.append("upload_preset", "blog_upload"); // your preset name
+      data.append("upload_preset", "blog_upload");
 
-      // ⚠️ FIXED: remove angle brackets around cloud name
       const res = await fetch("https://api.cloudinary.com/v1_1/dxu5jkdwy/image/upload", {
         method: "POST",
         body: data,
@@ -88,17 +104,29 @@ class Service {
       }
 
       console.log("✅ File uploaded to Cloudinary:", uploadRes.secure_url);
-      return uploadRes.secure_url; // URL to store in Firestore
+      return uploadRes.secure_url;
     } catch (error) {
       console.error("service :: uploadFile :: error", error);
       throw error;
     }
   }
 
-  // ✅ Delete file (Cloudinary deletion not available client-side)
+  // ✅ Delete file (for future server-side implementation)
   async deleteFile(fileUrl) {
-    console.log("⚠️ Delete not implemented for Cloudinary free plan.");
-    // Cloudinary deletion requires server-side API key for security.
+    try {
+      // Extract public_id for future use
+      const urlParts = fileUrl.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      const publicId = filename.split('.')[0];
+      
+      console.log("⚠️ Delete not implemented for Cloudinary free plan.");
+      console.log("Public ID for deletion:", publicId);
+      
+      // TODO: Implement server-side deletion when backend is ready
+      // This requires Cloudinary API key and secret
+    } catch (error) {
+      console.error("Error parsing file URL:", error);
+    }
   }
 }
 

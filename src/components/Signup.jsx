@@ -6,7 +6,7 @@ import { Button, Input, Logo } from './index.js'
 import { useForm } from 'react-hook-form'
 import authService from '../firebase/auth'
 
-export  default function Signup()  {
+export default function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
@@ -15,14 +15,14 @@ export  default function Signup()  {
   const create = async (data) => {
     setError("");
     try {
-      const user = await authService.registerUser(data.email, data.password);
-      if (user) {
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-          name: data.name,
+      const userData = await authService.registerUser(data.email, data.password);
+      if (userData) {
+        // ✅ Add displayName to userData
+        const userDataWithName = {
+          ...userData,
+          displayName: data.name,
         };
-        dispatch(login(userData));
+        dispatch(login(userDataWithName));
         navigate("/");
       }
     } catch (error) {
@@ -89,5 +89,3 @@ export  default function Signup()  {
     </div>
   );
 }
-
-
