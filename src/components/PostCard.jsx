@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 function PostCard({ id, title, featuredImage, author, createdAt }) {
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -14,10 +13,10 @@ function PostCard({ id, title, featuredImage, author, createdAt }) {
   };
 
   return (
-    <Link to={`/post/${id}`}>
+    <Link to={`/post/${id}`} className="block h-full">
       <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col">
         {/* Image Preview */}
-        <div className="h-48 w-full overflow-hidden bg-gray-200">
+        <div className="h-40 sm:h-48 w-full overflow-hidden bg-gray-200">
           {featuredImage ? (
             <img
               src={featuredImage}
@@ -25,9 +24,9 @@ function PostCard({ id, title, featuredImage, author, createdAt }) {
               className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-gray-200 to-gray-300">
               <svg
-                className="w-16 h-16 text-gray-400"
+                className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -44,16 +43,16 @@ function PostCard({ id, title, featuredImage, author, createdAt }) {
         </div>
 
         {/* Content */}
-        <div className="p-5 flex-1 flex flex-col">
-          <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 hover:text-blue-600 transition-colors">
+        <div className="p-4 sm:p-5 flex-1 flex flex-col">
+          <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800 mb-2 sm:mb-3 line-clamp-2 hover:text-blue-600 transition-colors">
             {title || "Untitled Post"}
           </h3>
 
           {/* Author and Date */}
-          <div className="mt-auto flex items-center justify-between text-sm text-gray-500">
+          <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm text-gray-500">
             <div className="flex items-center gap-2">
               <svg
-                className="w-4 h-4"
+                className="w-3 h-3 sm:w-4 sm:h-4 shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -63,12 +62,12 @@ function PostCard({ id, title, featuredImage, author, createdAt }) {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="font-medium">{author || "Anonymous"}</span>
+              <span className="font-medium truncate">{author || "Anonymous"}</span>
             </div>
             {createdAt && (
               <div className="flex items-center gap-1">
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 sm:w-4 sm:h-4 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -78,17 +77,17 @@ function PostCard({ id, title, featuredImage, author, createdAt }) {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>{formatDate(createdAt)}</span>
+                <span className="truncate">{formatDate(createdAt)}</span>
               </div>
             )}
           </div>
 
           {/* Read More Link */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <span className="text-blue-600 font-semibold hover:text-blue-700 inline-flex items-center gap-2 group">
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
+            <span className="text-blue-600 font-semibold hover:text-blue-700 inline-flex items-center gap-2 group text-xs sm:text-sm">
               Read More
               <svg
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

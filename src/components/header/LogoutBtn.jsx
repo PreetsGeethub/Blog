@@ -11,8 +11,8 @@ function LogoutBtn() {
   const handleLogout = async () => {
     try {
       await authService.logoutUser();
-      dispatch(logout()); // ✅ must CALL the action
-      navigate("/login"); // ✅ redirect after logout
+      dispatch(logout());
+      navigate("/login");
     } catch (error) {
       console.error("Error logging out in LogoutBtn component:", error);
     }
@@ -20,7 +20,7 @@ function LogoutBtn() {
 
   return (
     <button
-      className="inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+      className="w-full lg:w-auto inline-block px-6 py-2 duration-200 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium text-gray-700 transition-colors"
       onClick={handleLogout}
     >
       Logout
